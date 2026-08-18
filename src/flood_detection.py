@@ -1,6 +1,7 @@
 import ee
 import config as c
 from . import data_fetch as d
+import geopandas as gpd
 def detect_floods():
     """Detect newly flooded pixels by comparing before/after Sentinel-1 VH imagery,
     excluding permanent water bodies using the JRC Global Surface Water dataset."""
@@ -37,6 +38,19 @@ def detect_floods():
     # threshold step alone can occasionally misflag a lake as "new flood".
     flood_mask=mask.updateMask(permanent_water.Not())
     return flood_mask
+
+def get_flood_polygon(flood_mask):
+    """Convert the flood mask to a GeoDataFrame of polygons for further analysis."""
+    flood_vectors=flood_mask.reduceToVectors(
+        geometry=c.AOI_CORDS,
+        scale=30,
+        geometryType='polygon',
+        maxPixels=1e9
+    )
+    flood_geojson=flood_vectors.getInfo()
+    flood_gdf=gpd.GeoDataFrame.from_features(flood_geojson['features'])
+    flood_polygon=flood_gdf.geometry.unary_all
+    return flood_polygon
 if __name__ == "__main__":
     mask = detect_floods()
     print("Mask band Names:", mask.bandNames().getInfo())
