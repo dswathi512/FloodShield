@@ -41,16 +41,18 @@ def detect_floods():
 
 def get_flood_polygon(flood_mask):
     """Convert the flood mask to a GeoDataFrame of polygons for further analysis."""
+    aoi = ee.Geometry.Rectangle(c.AOI_CORDS)  # build the real Geometry object first
     flood_vectors=flood_mask.reduceToVectors(
-        geometry=c.AOI_CORDS,
+        geometry=aoi,
         scale=30,
         geometryType='polygon',
         maxPixels=1e9
     )
     flood_geojson=flood_vectors.getInfo()
     flood_gdf=gpd.GeoDataFrame.from_features(flood_geojson['features'])
-    flood_polygon=flood_gdf.geometry.unary_all
+    flood_polygon=flood_gdf.geometry.union_all()
     return flood_polygon
+
 if __name__ == "__main__":
     mask = detect_floods()
     print("Mask band Names:", mask.bandNames().getInfo())
