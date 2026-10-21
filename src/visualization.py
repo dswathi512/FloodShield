@@ -36,7 +36,7 @@ def create_flood_dashboard(flood_mask, affected_roads_gdf, center_coords, zoom=1
     m = folium.Map(location=center_coords, zoom_start=zoom)
 
     # Visualization settings for the flood layer — render flood pixels in red
-    flood_vis = {'min': 0, 'max': 1, 'palette': ['red']}
+    flood_vis = {'min': 0, 'max': 1, 'palette': ['red'], 'opacity': 0.6}
     m.add_ee_layer(flood_mask, flood_vis, 'Flood Extent')
 
     # Add affected roads as their own layer, only if any were found —

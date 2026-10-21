@@ -2,6 +2,7 @@ import ee
 import config as c 
 ee.Initialize(project=c.PROJECT_ID)
 def get_before_after_image():
+
     aoi = ee.Geometry.Rectangle(c.AOI_CORDS)
 
     before_collection = (ee.ImageCollection('COPERNICUS/S1_GRD')
@@ -28,7 +29,20 @@ def get_before_after_image():
     after_image = after_collection.median().focal_mean(radius=50, units='meters')
     print(before_image.bandNames().getInfo())
 
-    return before_image, after_image
+    return before_image, after_image"""
+def get_collection(aoi, start, end):
+    return (
+        ee.ImageCollection("COPERNICUS/S1_GRD")
+        .filterBounds(aoi)
+        .filterDate(start, end)
+        .filter(ee.Filter.eq("instrumentMode", "IW"))
+        .filter(
+            ee.Filter.listContains(
+                "transmitterReceiverPolarisation", "VH"
+            )
+        )
+        .select("VH")
+    )
 if __name__=="__main__":
     """For testing whether the images are fetched correctly, you can run this script and it will print the band names of the before and after images."""
     before,after=get_before_after_image()
