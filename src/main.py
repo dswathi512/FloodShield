@@ -17,4 +17,4 @@ aoi_center = [
     (west + east) / 2
 ]
 dashboard = v.create_flood_dashboard(flood_mask, affected_roads, aoi_center)
-dashboard.save('geoshield_dashboard.html')
+dashboard.save('Floodshield_dashboard.html')
