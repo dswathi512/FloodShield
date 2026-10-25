@@ -2,8 +2,8 @@ import osmnx as ox
 import config as c
 from . import flood_detection as fd
 import geopandas as gpd
-
 ox.settings.log_console = False
+
 
 
 def get_roads():
@@ -15,6 +15,7 @@ def get_roads():
     roads['b'] = roads[['u', 'v']].max(axis=1)
     roads = roads.drop_duplicates(subset=['a', 'b', 'key']).drop(columns=['a', 'b'])
     return roads
+
 
 
 def analyze_road_impact(roads, flood_mask):

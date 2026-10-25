@@ -4,10 +4,11 @@ from . import data_fetch as d
 import geopandas as gpd
 
 
-def detect_floods():
+def detect_floods(before_image=None, after_image=None):
     """Return a mask where only flooded pixels exist (value 1); everything else is masked out."""
     aoi = ee.Geometry.Rectangle(c.AOI_CORDS)
-    before_image, after_image = d.get_before_after_image()
+    if before_image is None or after_image is None:
+        before_image, after_image = d.get_before_after_image()
 
     diff = after_image.subtract(before_image)
     flood = diff.lt(-c.THRESHOLD_DB)
